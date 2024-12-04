@@ -1,0 +1,27 @@
+# Exclude version control
+.git
+.gitignore
+
+# Exclude dependencies
+vendor/
+node_modules/
+
+# Exclude build artifacts
+bootstrap/cache/*
+storage/logs/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/framework/cache/*
+
+# Exclude environment files
+.env
+.env.example
+
+# Exclude Docker and development files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Exclude miscellaneous
+*.log
+.DS_Store
