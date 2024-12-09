@@ -1,25 +1,38 @@
-# Use PHP 8.2 CLI image
-FROM php:8.2-cli
-
-# Set working directory
+FROM php:8.2 as php
 WORKDIR /var/www/html
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
+# Mod Rewrite
+RUN a2enmod rewrite
+
+# Linux Library
+RUN apt-get update -y && apt-get install -y \
+    libicu-dev \
+    libmariadb-dev \
+    unzip zip \
+    zlib1g-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
     libpq-dev \
-    zip \
-    unzip
+    libcurl4-gnutls-dev
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# Composer
+COPY --from=composer:2.8.3 /usr/bin/composer /usr/bin/composer
 
-# Install PHP PostgreSQL extension
-RUN docker-php-ext-install pdo pdo_pgsql
+# PHP Extension
+RUN docker-php-ext-install pdo pdo_mysql bcmath gd
+RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Install Laravel dependencies
+COPY . /var/www/html
+RUN composer install
 
-# Use PHP built-in server to run Laravel
-CMD php artisan serve --host=0.0.0.0 --port=8000
+# Set permissions (optional)
+RUN chown -R www-data:www-data /var/www/html
+
+
+ENV PORT=8000
+ENTRYPOINT [ "docker/entrypoint.sh" ]
