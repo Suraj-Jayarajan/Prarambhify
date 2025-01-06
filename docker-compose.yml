@@ -1,50 +1,48 @@
+# docker-compose.yml
+version: '3.8'
+
 services:
-  # PHP Service
-  php:
-    image: php:fpm
-    container_name: prarambhify-php
-    working_dir: /var/www/html
-    volumes:
-      - ./src:/var/www/html
-    depends_on:
-      - postgres
-    networks:
-      - prarambhify-network
-
-  # Database Server
-  postgres:
-    image: postgres:latest
-    container_name: prarambhify-postgres
-    ports:
-      - "5432:5432"
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: prarambhify
-      POSTGRES_USER: prarambhify
-      POSTGRES_PASSWORD: secret
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    networks:
-      - prarambhify-network
-
-  # Nginx Server
   nginx:
-    image: nginx:latest
-    container_name: prarambhify-nginx
+    image: nginx:alpine
+    container_name: pramabhify_nginx
     ports:
       - "8080:80"
     volumes:
       - ./src:/var/www/html
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - php
     networks:
-      - prarambhify-network
+      - pramabhify_net
 
-volumes:
-  db-data:
+  php:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: pramabhify_php
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - pramabhify_net
 
+  postgres:
+    image: postgres:15
+    container_name: pramabhify_postgres
+    environment:
+      POSTGRES_DB: pramabhify
+      POSTGRES_USER: pramabhify
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pramabhify_net
 
 networks:
-  prarambhify-network:
+  pramabhify_net:
     driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
