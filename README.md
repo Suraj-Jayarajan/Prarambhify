@@ -17,50 +17,15 @@ Start building faster, stay focused on what matters, and leverage the power of P
 - In built Users & Roles
 - In built ACL
 
-# Prerequisites
-Ensure you have the following installed on your system:
-- Docker
-- Docker Compose
-
-## Getting Started
-
-### Clone the repository:
-```
-git clone <repository-url>
-cd Prarambhify
-```
-
-### Start the Docker containers:
-```bash
-docker-compose up -d
-```
-
-### Access the application:
-
-Frontend: Open http://localhost:8080 in your browser.
-
-Database: Connect via pgAdmin or any PostgreSQL client to:
-
-Host: localhost
-
-Port: 5432 (or 5433 if changed in docker-compose.yml)
-
-Username: prarambhify
-
-Password: secret
-
-Database: prarambh
-
-
-# Setup Guide from Scratch for a docker environment
+# Getting Started
 
 ## Creating Docker For PHP, Niginx and Posgress from Scratch
 
 ### Step 1: Create Directories
 
 ```bash
-mkdir prarambhify
-cd prarambhify
+mkdir pramabhify
+cd pramabhify
 
 # Create necessary directories
 mkdir -p docker/nginx
@@ -79,7 +44,7 @@ version: "3.8"
 services:
   nginx:
     image: nginx:alpine
-    container_name: prarambhify_nginx
+    container_name: pramabhify_nginx
     ports:
       - "8080:80"
     volumes:
@@ -88,34 +53,34 @@ services:
     depends_on:
       - php
     networks:
-      - prarambhify_net
+      - pramabhify_net
 
   php:
     build:
       context: ./docker/php
       dockerfile: Dockerfile
-    container_name: prarambhify_php
+    container_name: pramabhify_php
     volumes:
       - ./src:/var/www/html
     networks:
-      - prarambhify_net
+      - pramabhify_net
 
   postgres:
-    image: postgres:17
-    container_name: prarambhify_postgres
+    image: postgres:15
+    container_name: pramabhify_postgres
     environment:
-      POSTGRES_DB: prarambh
-      POSTGRES_USER: prarambhify
+      POSTGRES_DB: pramabhify
+      POSTGRES_USER: pramabhify
       POSTGRES_PASSWORD: secret
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - prarambhify_net
+      - pramabhify_net
 
 networks:
-  prarambhify_net:
+  pramabhify_net:
     driver: bridge
 
 volumes:
@@ -176,21 +141,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Set permissions properly
-RUN chown -R www-data:www-data /var/www/html && \
-    chmod -R 755 /var/www/html
-
-# Create Laravel storage directory structure and set permissions
-RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} && \
-    mkdir -p /var/www/html/storage/logs && \
-    chown -R www-data:www-data /var/www/html/storage && \
-    chmod -R 775 /var/www/html/storage
-
-# Create bootstrap/cache directory and set permissions
-RUN mkdir -p /var/www/html/bootstrap/cache && \
-    chown -R www-data:www-data /var/www/html/bootstrap/cache && \
-    chmod -R 775 /var/www/html/bootstrap/cache
-
 # Set specific permissions that worked
 RUN chown -R www-data:www-data /var/www/html/storage && \
     chown -R www-data:www-data /var/www/html/bootstrap/cache && \
@@ -226,10 +176,9 @@ cp src/.env.example src/.env
 DB_CONNECTION=pgsql
 DB_HOST=postgres
 DB_PORT=5432
-DB_DATABASE=prarambh
-DB_USERNAME=prarambhify
+DB_DATABASE=pramabhify
+DB_USERNAME=pramabhify
 DB_PASSWORD=secret
-DB_SCHEMA=prarambhify
 ```
 
 ### Step 8: Generate Application Key and run migrations
@@ -254,7 +203,7 @@ Important Information:
 The project structure will be:
 
 ```bash
-prarambhify/
+pramabhify/
 ├── docker/
 │   ├── nginx/
 │   │   └── default.conf
