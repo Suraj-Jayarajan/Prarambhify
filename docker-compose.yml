@@ -4,7 +4,7 @@ version: '3.8'
 services:
   nginx:
     image: nginx:alpine
-    container_name: pramabhify_nginx
+    container_name: prarambhify_nginx
     ports:
       - "8080:80"
     volumes:
@@ -13,34 +13,34 @@ services:
     depends_on:
       - php
     networks:
-      - pramabhify_net
+      - prarambhify_net
 
   php:
     build:
       context: ./docker/php
       dockerfile: Dockerfile
-    container_name: pramabhify_php
+    container_name: prarambhify_php
     volumes:
       - ./src:/var/www/html
     networks:
-      - pramabhify_net
+      - prarambhify_net
 
   postgres:
-    image: postgres:15
-    container_name: pramabhify_postgres
+    image: postgres:17
+    container_name: prarambhify_postgres
     environment:
-      POSTGRES_DB: pramabhify
-      POSTGRES_USER: pramabhify
+      POSTGRES_DB: prarambh
+      POSTGRES_USER: prarambhify
       POSTGRES_PASSWORD: secret
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - pramabhify_net
+      - prarambhify_net
 
 networks:
-  pramabhify_net:
+  prarambhify_net:
     driver: bridge
 
 volumes:
